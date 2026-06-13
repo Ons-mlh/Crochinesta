@@ -53,14 +53,14 @@ export default function ProductCard({ name, price, image, isNew = false }: Produ
       </div>
 
       <div className="mt-3 flex items-start gap-2">
-        <h3 className="text-sm font-medium text-[#3D2314]">{name}</h3>
+        <h3 className="font-serif text-sm font-medium text-[#3D2314]">{name}</h3>
         {isNew ? (
-          <span className="rounded-full bg-[#3D2314] px-2 py-0.5 text-[10px] text-white">
+          <span className="rounded-full bg-[#3D2314] px-2 py-0.5 font-sans text-[10px] text-white">
             New
           </span>
         ) : null}
       </div>
-      <p className="mt-1 text-sm font-semibold text-[#9B6845]">{price}</p>
+      <p className="mt-1 font-sans text-sm font-semibold text-[#9B6845]">{price}</p>
     </article>
   );
 }

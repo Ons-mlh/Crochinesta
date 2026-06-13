@@ -47,7 +47,7 @@ export default function NewReleases() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-8 flex items-center justify-between gap-4">
           <h2 className="font-serif text-3xl text-[#3D2314]">New Releases</h2>
-          <Link href="/products" className="text-sm text-[#9B6845] hover:underline">
+          <Link href="/products" className="font-sans text-sm text-[#9B6845] hover:underline">
             View all
           </Link>
         </div>

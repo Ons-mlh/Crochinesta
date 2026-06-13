@@ -16,10 +16,10 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
         <div>
           <p className="font-serif text-xl">Crochinesta</p>
-          <p className="mt-1 text-xs text-white/50">Handmade with love.</p>
+          <p className="mt-1 font-sans text-xs text-white/50">Handmade with love.</p>
         </div>
 
-        <nav className="flex flex-row gap-6 text-sm text-white/60">
+        <nav className="flex flex-row gap-6 font-sans text-sm text-white/60">
           {[
             { label: "Home", href: "/" },
             { label: "About", href: "/about" },
@@ -36,13 +36,13 @@ export default function Footer() {
           ))}
         </nav>
 
-        <p className="text-sm text-gray-400">
+        <p className="font-sans text-sm text-gray-400">
           Made with 🤎 by{" "}
           <a
             href="https://www.linkedin.com/in/ons-el-maleh-648531300/"
             target="_blank"
             rel="noopener noreferrer"
-            className=" text-[#d9c9bb] hover:text-[#efe9e4] decoration-[#c9b6a6] hover:decoration-[#efe9e4] transition-colors"
+            className="text-[#d9c9bb] decoration-[#c9b6a6] transition-colors hover:text-[#efe9e4] hover:decoration-[#efe9e4]"
           >
             Ons El Maleh
           </a>

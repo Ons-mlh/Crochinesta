@@ -14,7 +14,8 @@
     "next": "16.1.5",
     "quokka-treasure-chest": "^1.0.3",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "resend": "^6.12.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.18",

@@ -16,35 +16,35 @@ export default function Hero() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 md:grid-cols-2">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <h1 className="text-5xl font-bold leading-tight tracking-tight text-[#3D2314] lg:text-6xl">
+            <h1 className="font-serif text-5xl leading-tight tracking-wide text-[#3D2314] lg:text-6xl">
               <span className="block">Handmade</span>
               <span className="block">
                 Crochet <span className="text-[#9B6845]">Products</span>
               </span>
             </h1>
 
-            <p className="max-w-xl text-lg leading-relaxed text-[#6B5344] md:text-xl">
+            <p className="max-w-xl font-sans text-lg leading-relaxed text-[#6B5344] md:text-xl">
               Made with heart, stitched by hand. Discover beautiful, artisan-crafted crochet pieces that bring warmth and personality to your home.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 text-xs font-medium text-[#3D2314]">
+            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 font-sans text-xs font-medium text-[#3D2314]">
               100% Handmade
             </span>
-            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 text-xs font-medium text-[#3D2314]">
+            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 font-sans text-xs font-medium text-[#3D2314]">
               Custom orders welcome
             </span>
-            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 text-xs font-medium text-[#3D2314]">
+            <span className="rounded-full border border-[#D9C9BB] bg-[#F0E8DF] px-3 py-1 font-sans text-xs font-medium text-[#3D2314]">
               Ships all across Tunisia
             </span>
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <button className="rounded-full bg-[#3D2314] px-8 py-3 font-semibold text-white transition-colors hover:bg-[#5a3520]">
+            <button className="rounded-full bg-[#3D2314] px-8 py-3 font-sans font-semibold text-white transition-colors hover:bg-[#5a3520]">
               Shop Now
             </button>
-            <button className="rounded-full border border-[#3D2314] px-8 py-3 font-semibold text-[#3D2314] transition-colors hover:bg-[#F0E8DF]">
+            <button className="rounded-full border border-[#3D2314] px-8 py-3 font-sans font-semibold text-[#3D2314] transition-colors hover:bg-[#F0E8DF]">
               Learn More
             </button>
           </div>

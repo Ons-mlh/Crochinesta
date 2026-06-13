@@ -19,7 +19,7 @@ export default function Contact() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-16 px-6 md:grid-cols-2">
         <div>
           <h2 className="font-serif text-3xl text-[#3D2314]">Get in touch</h2>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#6B5344]">
+          <p className="mt-3 max-w-xs font-sans text-sm leading-relaxed text-[#6B5344]">
             Have a custom order in mind? Want to know more about a product? We&apos;d love to hear from you.
           </p>
 
@@ -33,8 +33,8 @@ export default function Contact() {
                   <Image src={item.icon} alt={item.label} width={28} height={28} className="rounded-full object-contain" />
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-[#3D2314]">{item.label}</p>
-                  <p className="text-xs text-[#9B6845]"><a href={item.href} target="_blank" rel="noopener noreferrer">
+                  <p className="font-sans text-sm font-medium text-[#3D2314]">{item.label}</p>
+                  <p className="font-sans text-xs text-[#9B6845]"><a href={item.href} target="_blank" rel="noopener noreferrer">
                     {item.handle}
                   </a></p>
                 </div>
@@ -45,7 +45,7 @@ export default function Contact() {
 
         <div className="flex flex-col gap-4">
           {submitted ? (
-            <p className="rounded-2xl border border-[#D9C9BB] bg-white px-4 py-5 text-sm text-[#9B6845]">
+            <p className="rounded-2xl border border-[#D9C9BB] bg-white px-4 py-5 font-sans text-sm text-[#9B6845]">
               Thank you! We&apos;ll get back to you soon. ✦
             </p>
           ) : (
@@ -55,26 +55,26 @@ export default function Contact() {
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                 placeholder="Name"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
+                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
               />
               <input
                 type="email"
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 placeholder="Email"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
+                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
               />
               <textarea
                 rows={4}
                 value={form.message}
                 onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))}
                 placeholder="Message"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
+                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
               />
               <button
                 type="button"
                 onClick={() => setSubmitted(true)}
-                className="mt-2 w-full rounded-full bg-[#3D2314] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#5a3520]"
+                className="mt-2 w-full rounded-full bg-[#3D2314] py-3 font-sans text-sm font-semibold text-white transition-colors hover:bg-[#5a3520]"
               >
                 Send Message
               </button>

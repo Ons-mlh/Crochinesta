@@ -24,7 +24,7 @@ export default function Collections() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center">
           <h2 className="font-serif text-3xl text-[#3D2314]">Shop by Collection</h2>
-          <p className="mt-2 text-sm text-[#9B6845]">Find the perfect piece for every moment</p>
+          <p className="mt-2 font-sans text-sm text-[#9B6845]">Find the perfect piece for every moment</p>
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -44,14 +44,14 @@ export default function Collections() {
               <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent transition-colors duration-300 group-hover:from-black/60" />
 
               {collection.featured ? (
-                <span className="absolute left-3 top-3 rounded-full bg-[#9B6845] px-2.5 py-1 text-[10px] text-white">
+                <span className="absolute left-3 top-3 rounded-full bg-[#9B6845] px-2.5 py-1 font-sans text-[10px] text-white">
                   New
                 </span>
               ) : null}
 
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="font-serif text-lg text-white">{collection.name}</h3>
-                <p className="mt-0.5 text-xs text-white/70">{collection.itemCount} items</p>
+                <p className="mt-0.5 font-sans text-xs text-white/70">{collection.itemCount} items</p>
               </div>
             </Link>
           ))}
