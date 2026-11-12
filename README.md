@@ -13,3 +13,9 @@ The API returns a temporary unavailable response until the required Resend setti
 # Contact form rate limiting
 
 The contact endpoint allows up to five valid submissions per client in a rolling 15-minute window. Production deployments must configure an Upstash Redis database and set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. The endpoint keys limits by a trusted client IP header: `x-real-ip` by default, or the platform's trusted header via `CONTACT_CLIENT_IP_HEADER`. Configure that header only when the hosting platform overwrites it with the actual client IP; do not use an untrusted client supplied header. If the shared store or valid IP header is unavailable in production, the endpoint returns `503` instead of sending without reliable rate limiting. Local development can use the in-memory fallback, which does not coordinate between processes and resets on restart.
+
+## Automated tests
+
+- `npm run test:unit` runs contact API tests with the Resend provider mocked.
+- `npm run test:e2e` runs a single Playwright contact form success flow; it intercepts the API request, so no email or production credentials are used. Install the browser once with `npx playwright install chromium`.
+- Locale redirect and text-direction tests are staged for when localized routes land on the base branch. Add component or broader browser coverage only when it covers behavior beyond this contact journey.
