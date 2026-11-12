@@ -98,19 +98,56 @@ export async function POST(request: Request) {
 
   const resend = new Resend(apiKey);
   const subject = values.subject.replace(/[\r\n]+/g, " ").trim();
+  const escapedName = escapeHtml(values.name);
+  const escapedEmail = escapeHtml(values.email);
+  const escapedMessage = escapeHtml(values.message).replace(/\r?\n/g, "<br>");
+  const replySubject = encodeURIComponent(
+    `Re: ${subject || "Crochinesta contact form message"}`,
+  );
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Arial, sans-serif; background-color: #f7f7f5; padding: 32px 16px; margin: 0;">
+      <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e5ddd7;">
+        <div style="background-color: #4e1807; padding: 24px 32px; text-align: center;">
+          <p style="margin: 0; font-size: 20px; font-weight: 600; color: #ffffff; letter-spacing: 0.05em;">🧶 Crochinesta</p>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #efe9e4;">New contact form submission</p>
+        </div>
+        <div style="padding: 32px;">
+          <p style="margin: 0 0 24px; font-size: 14px; color: #7c6f67; line-height: 1.6;">You've received a new message from your website contact form.</p>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            <tr>
+              <td style="padding: 8px 0; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em; width: 80px; vertical-align: top;">Name</td>
+              <td style="padding: 8px 0; font-size: 14px; color: #4e1807; font-weight: 600;">${escapedName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em; width: 80px; vertical-align: top; border-top: 1px solid #efe9e4;">Email</td>
+              <td style="padding: 8px 0; font-size: 14px; color: #4e1807; border-top: 1px solid #efe9e4;"><a href="mailto:${escapedEmail}" style="color: #4e1807; text-decoration: underline;">${escapedEmail}</a></td>
+            </tr>
+          </table>
+          ${subject ? `<p style="margin: 0 0 8px; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em;">Subject</p><p style="margin: 0 0 24px; font-size: 14px; color: #4e1807;">${escapeHtml(subject)}</p>` : ""}
+          <div>
+            <p style="margin: 0 0 8px; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em;">Message</p>
+            <div style="background-color: #f0ebe7; border-radius: 12px; padding: 16px; font-size: 14px; color: #4e1807; line-height: 1.7;">${escapedMessage}</div>
+          </div>
+          <div style="text-align: center; margin-top: 28px;">
+            <a href="mailto:${escapedEmail}?subject=${replySubject}" style="display: inline-block; background-color: #4e1807; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 24px; border-radius: 999px;">Reply to ${escapedName}</a>
+          </div>
+        </div>
+        <div style="padding: 16px 32px; text-align: center; border-top: 1px solid #efe9e4;">
+          <p style="margin: 0; font-size: 11px; color: #b8a898;">Sent from the Crochinesta website contact form</p>
+        </div>
+      </div>
+    </div>
+  `;
 
   try {
     const { error } = await resend.emails.send({
       from,
       to,
       replyTo: values.email,
-      subject: subject || `New contact message from ${values.name}`,
-      html: [
-        `<p><strong>Name:</strong> ${escapeHtml(values.name)}</p>`,
-        `<p><strong>Email:</strong> ${escapeHtml(values.email)}</p>`,
-        `<p><strong>Message:</strong></p><p>${escapeHtml(values.message).replace(/\n/g, "<br>")}</p>`,
-      ].join(""),
-      text: `Name: ${values.name}\nEmail: ${values.email}\n\n${values.message}`,
+      subject: subject || "New contact form submission",
+      html,
+      text: `Name: ${values.name.replace(/[\r\n]+/g, " ")}\nEmail: ${values.email}\n\n${values.message}`,
     });
 
     if (error) {
