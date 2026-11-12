@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { Clock, Mail, MapPin } from "lucide-react";
+import ContactForm from "../../../components/contact/ContactForm";
 
 const contactInfo = [
   {
@@ -37,51 +37,7 @@ const socialLinks = [
   },
 ];
 
-type ContactForm = {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-};
-
-type ContactErrors = Partial<Record<keyof ContactForm, string>>;
-
-const initialForm: ContactForm = {
-  name: "",
-  email: "",
-  subject: "",
-  message: "",
-};
-
-const inputClassName =
-  "w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-sans text-sm text-[var(--primary)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
-
 export default function ContactPage() {
-  const [form, setForm] = useState<ContactForm>(initialForm);
-  const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<ContactErrors>({});
-
-  const updateField = (field: keyof ContactForm, value: string) => {
-    setForm((current) => ({ ...current, [field]: value }));
-    setErrors((current) => ({ ...current, [field]: undefined }));
-  };
-
-  const handleSubmit = () => {
-    const nextErrors: ContactErrors = {};
-
-    Object.entries(form).forEach(([field, value]) => {
-      if (!value.trim()) {
-        nextErrors[field as keyof ContactForm] = "This field is required.";
-      }
-    });
-
-    setErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length === 0) {
-      setSubmitted(true);
-    }
-  };
-
   return (
     <>
       <section className="py-16">
@@ -161,92 +117,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {submitted ? (
-                <p className="py-8 text-center font-sans text-sm text-(--primary)">
-                  Thank you for reaching out! We&apos;ll get back to you within
-                  24 hours. &#10022;
-                </p>
-              ) : (
-                <>
-                  <div>
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={(event) =>
-                        updateField("name", event.target.value)
-                      }
-                      placeholder="Name"
-                      className={inputClassName}
-                    />
-                    {errors.name ? (
-                      <p className="mt-1 font-sans text-xs text-red-600">
-                        {errors.name}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={(event) =>
-                        updateField("email", event.target.value)
-                      }
-                      placeholder="Email"
-                      className={inputClassName}
-                    />
-                    {errors.email ? (
-                      <p className="mt-1 font-sans text-xs text-red-600">
-                        {errors.email}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <input
-                      type="text"
-                      value={form.subject}
-                      onChange={(event) =>
-                        updateField("subject", event.target.value)
-                      }
-                      placeholder="Subject"
-                      className={inputClassName}
-                    />
-                    {errors.subject ? (
-                      <p className="mt-1 font-sans text-xs text-red-600">
-                        {errors.subject}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <textarea
-                      rows={5}
-                      value={form.message}
-                      onChange={(event) =>
-                        updateField("message", event.target.value)
-                      }
-                      placeholder="Message"
-                      className={inputClassName}
-                    />
-                    {errors.message ? (
-                      <p className="mt-1 font-sans text-xs text-red-600">
-                        {errors.message}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="mt-2 w-full rounded-full bg-(--primary) py-3 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                  >
-                    Send Message
-                  </button>
-                </>
-              )}
-            </div>
+            <ContactForm />
           </div>
 
           <p className="mt-12 text-center font-sans text-sm text-(--muted-foreground)">

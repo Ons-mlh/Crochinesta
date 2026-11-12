@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { useFadeInOnScroll } from "../hooks/useFadeInOnScroll";
+import ContactForm from "../contact/ContactForm";
 
 export default function Contact() {
   const { ref, isVisible } = useFadeInOnScroll();
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
-
   return (
     <section
       ref={ref}
@@ -43,44 +40,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {submitted ? (
-            <p className="rounded-2xl border border-[#D9C9BB] bg-white px-4 py-5 font-sans text-sm text-[#9B6845]">
-              Thank you! We&apos;ll get back to you soon. ✦
-            </p>
-          ) : (
-            <>
-              <input
-                type="text"
-                value={form.name}
-                onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                placeholder="Name"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
-              />
-              <input
-                type="email"
-                value={form.email}
-                onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-                placeholder="Email"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
-              />
-              <textarea
-                rows={4}
-                value={form.message}
-                onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))}
-                placeholder="Message"
-                className="w-full rounded-xl border border-[#D9C9BB] bg-white px-4 py-3 font-sans text-sm text-[#3D2314] placeholder-[#B8A898] focus:outline-none focus:ring-2 focus:ring-[#9B6845]/30"
-              />
-              <button
-                type="button"
-                onClick={() => setSubmitted(true)}
-                className="mt-2 w-full rounded-full bg-[#3D2314] py-3 font-sans text-sm font-semibold text-white transition-colors hover:bg-[#5a3520]"
-              >
-                Send Message
-              </button>
-            </>
-          )}
-        </div>
+        <ContactForm includeSubject={false} />
       </div>
     </section>
   );
