@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isIP } from "node:net";
 import { Resend } from "resend";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -38,25 +39,21 @@ const localRateLimitEntries = new Map<
   { count: number; resetAt: number }
 >();
 
-function getClientKey(request: Request, email: string) {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const clientAddress = forwardedFor
-    ?.split(",")
-    .at(-1)
-    ?.trim() || request.headers.get("x-real-ip")?.trim();
+function getTrustedClientIp(request: Request) {
+  const headerName = process.env.CONTACT_CLIENT_IP_HEADER || "x-real-ip";
+  const clientIp = request.headers.get(headerName)?.trim();
 
-  return clientAddress || email.toLowerCase();
+  return clientIp && isIP(clientIp) ? clientIp : null;
 }
 
-function checkLocalRateLimit(request: Request, email: string) {
+function checkLocalRateLimit(clientKey: string) {
   const now = Date.now();
 
   for (const [key, entry] of localRateLimitEntries) {
     if (entry.resetAt <= now) localRateLimitEntries.delete(key);
   }
 
-  const key = getClientKey(request, email);
-  const entry = localRateLimitEntries.get(key);
+  const entry = localRateLimitEntries.get(clientKey);
 
   if (entry && entry.count >= RATE_LIMIT_MAX_SUBMISSIONS) {
     return Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
@@ -67,7 +64,7 @@ function checkLocalRateLimit(request: Request, email: string) {
     return null;
   }
 
-  localRateLimitEntries.set(key, {
+  localRateLimitEntries.set(clientKey, {
     count: 1,
     resetAt: now + RATE_LIMIT_WINDOW_MS,
   });
@@ -76,9 +73,15 @@ function checkLocalRateLimit(request: Request, email: string) {
 }
 
 async function getRateLimitRetryAfter(request: Request, email: string) {
+  const clientIp = getTrustedClientIp(request);
+
   if (sharedRateLimiter) {
+    if (!clientIp) {
+      throw new Error("A valid trusted client IP header is missing.");
+    }
+
     const { success, reset } = await sharedRateLimiter.limit(
-      getClientKey(request, email),
+      clientIp,
     );
     return success ? null : Math.max(1, Math.ceil((reset - Date.now()) / 1000));
   }
@@ -87,7 +90,7 @@ async function getRateLimitRetryAfter(request: Request, email: string) {
     throw new Error("Shared contact rate limiting is not configured.");
   }
 
-  return checkLocalRateLimit(request, email);
+  return checkLocalRateLimit(clientIp || email.toLowerCase());
 }
 
 function escapeHtml(value: string) {
