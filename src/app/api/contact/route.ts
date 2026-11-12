@@ -13,6 +13,65 @@ type FieldErrors = Partial<
 >;
 
 const EMAIL_PATTERN = /^[^\s@,<>]+@[^\s@,<>]+\.[^\s@,<>]+$/;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX_SUBMISSIONS = 5;
+const RATE_LIMIT_MAX_CLIENTS = 10_000;
+
+type RateLimitEntry = {
+  count: number;
+  resetAt: number;
+};
+
+type RateLimitResult =
+  | { allowed: true }
+  | { allowed: false; retryAfterSeconds: number };
+
+const contactSubmissions = new Map<string, RateLimitEntry>();
+
+function getClientKey(request: Request, email: string) {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const clientAddress = forwardedFor
+    ?.split(",")
+    .at(-1)
+    ?.trim() || request.headers.get("x-real-ip")?.trim();
+
+  return clientAddress || email.toLowerCase();
+}
+
+function checkRateLimit(request: Request, email: string): RateLimitResult {
+  const now = Date.now();
+
+  for (const [key, entry] of contactSubmissions) {
+    if (entry.resetAt <= now) contactSubmissions.delete(key);
+  }
+
+  const key = getClientKey(request, email);
+  const entry = contactSubmissions.get(key);
+
+  if (entry && entry.count >= RATE_LIMIT_MAX_SUBMISSIONS) {
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.max(1, Math.ceil((entry.resetAt - now) / 1000)),
+    };
+  }
+
+  if (entry) {
+    entry.count += 1;
+    return { allowed: true };
+  }
+
+  if (contactSubmissions.size >= RATE_LIMIT_MAX_CLIENTS) {
+    const oldestKey = contactSubmissions.keys().next().value;
+    if (oldestKey) contactSubmissions.delete(oldestKey);
+  }
+
+  contactSubmissions.set(key, {
+    count: 1,
+    resetAt: now + RATE_LIMIT_WINDOW_MS,
+  });
+
+  return { allowed: true };
+}
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (character) => {
@@ -93,6 +152,17 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "The contact form is temporarily unavailable. Please try again later." },
       { status: 503 },
+    );
+  }
+
+  const rateLimit = checkRateLimit(request, values.email);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many messages. Please try again in a few minutes." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      },
     );
   }
 
