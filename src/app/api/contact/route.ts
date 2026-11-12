@@ -170,6 +170,9 @@ export async function POST(request: Request) {
   const subject = values.subject.replace(/[\r\n]+/g, " ").trim();
   const escapedName = escapeHtml(values.name);
   const escapedEmail = escapeHtml(values.email);
+  const mailtoEmail = escapeHtml(
+    encodeURIComponent(values.email).replace(/%40/gi, "@"),
+  );
   const escapedMessage = escapeHtml(values.message).replace(/\r?\n/g, "<br>");
   const replySubject = encodeURIComponent(
     `Re: ${subject || "Crochinesta contact form message"}`,
@@ -191,7 +194,7 @@ export async function POST(request: Request) {
             </tr>
             <tr>
               <td style="padding: 8px 0; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em; width: 80px; vertical-align: top; border-top: 1px solid #efe9e4;">Email</td>
-              <td style="padding: 8px 0; font-size: 14px; color: #4e1807; border-top: 1px solid #efe9e4;"><a href="mailto:${escapedEmail}" style="color: #4e1807; text-decoration: underline;">${escapedEmail}</a></td>
+              <td style="padding: 8px 0; font-size: 14px; color: #4e1807; border-top: 1px solid #efe9e4;"><a href="mailto:${mailtoEmail}" style="color: #4e1807; text-decoration: underline;">${escapedEmail}</a></td>
             </tr>
           </table>
           ${subject ? `<p style="margin: 0 0 8px; font-size: 12px; color: #7c6f67; text-transform: uppercase; letter-spacing: 0.05em;">Subject</p><p style="margin: 0 0 24px; font-size: 14px; color: #4e1807;">${escapeHtml(subject)}</p>` : ""}
@@ -200,7 +203,7 @@ export async function POST(request: Request) {
             <div style="background-color: #f0ebe7; border-radius: 12px; padding: 16px; font-size: 14px; color: #4e1807; line-height: 1.7;">${escapedMessage}</div>
           </div>
           <div style="text-align: center; margin-top: 28px;">
-            <a href="mailto:${escapedEmail}?subject=${replySubject}" style="display: inline-block; background-color: #4e1807; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 24px; border-radius: 999px;">Reply to ${escapedName}</a>
+            <a href="mailto:${mailtoEmail}?subject=${replySubject}" style="display: inline-block; background-color: #4e1807; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 24px; border-radius: 999px;">Reply to ${escapedName}</a>
           </div>
         </div>
         <div style="padding: 16px 32px; text-align: center; border-top: 1px solid #efe9e4;">
