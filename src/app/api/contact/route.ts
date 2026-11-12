@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 type ContactPayload = {
   name?: unknown;
@@ -15,18 +17,26 @@ type FieldErrors = Partial<
 const EMAIL_PATTERN = /^[^\s@,<>]+@[^\s@,<>]+\.[^\s@,<>]+$/;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const RATE_LIMIT_MAX_SUBMISSIONS = 5;
-const RATE_LIMIT_MAX_CLIENTS = 10_000;
+const RATE_LIMIT_WINDOW = "15 m";
+const hasSharedRateLimitConfig = Boolean(
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
+);
 
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
+const sharedRateLimiter = hasSharedRateLimitConfig
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMIT_MAX_SUBMISSIONS,
+        RATE_LIMIT_WINDOW,
+      ),
+      prefix: "crochinesta:contact",
+    })
+  : null;
 
-type RateLimitResult =
-  | { allowed: true }
-  | { allowed: false; retryAfterSeconds: number };
-
-const contactSubmissions = new Map<string, RateLimitEntry>();
+const localRateLimitEntries = new Map<
+  string,
+  { count: number; resetAt: number }
+>();
 
 function getClientKey(request: Request, email: string) {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -38,39 +48,46 @@ function getClientKey(request: Request, email: string) {
   return clientAddress || email.toLowerCase();
 }
 
-function checkRateLimit(request: Request, email: string): RateLimitResult {
+function checkLocalRateLimit(request: Request, email: string) {
   const now = Date.now();
 
-  for (const [key, entry] of contactSubmissions) {
-    if (entry.resetAt <= now) contactSubmissions.delete(key);
+  for (const [key, entry] of localRateLimitEntries) {
+    if (entry.resetAt <= now) localRateLimitEntries.delete(key);
   }
 
   const key = getClientKey(request, email);
-  const entry = contactSubmissions.get(key);
+  const entry = localRateLimitEntries.get(key);
 
   if (entry && entry.count >= RATE_LIMIT_MAX_SUBMISSIONS) {
-    return {
-      allowed: false,
-      retryAfterSeconds: Math.max(1, Math.ceil((entry.resetAt - now) / 1000)),
-    };
+    return Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
   }
 
   if (entry) {
     entry.count += 1;
-    return { allowed: true };
+    return null;
   }
 
-  if (contactSubmissions.size >= RATE_LIMIT_MAX_CLIENTS) {
-    const oldestKey = contactSubmissions.keys().next().value;
-    if (oldestKey) contactSubmissions.delete(oldestKey);
-  }
-
-  contactSubmissions.set(key, {
+  localRateLimitEntries.set(key, {
     count: 1,
     resetAt: now + RATE_LIMIT_WINDOW_MS,
   });
 
-  return { allowed: true };
+  return null;
+}
+
+async function getRateLimitRetryAfter(request: Request, email: string) {
+  if (sharedRateLimiter) {
+    const { success, reset } = await sharedRateLimiter.limit(
+      getClientKey(request, email),
+    );
+    return success ? null : Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Shared contact rate limiting is not configured.");
+  }
+
+  return checkLocalRateLimit(request, email);
 }
 
 function escapeHtml(value: string) {
@@ -155,13 +172,23 @@ export async function POST(request: Request) {
     );
   }
 
-  const rateLimit = checkRateLimit(request, values.email);
-  if (!rateLimit.allowed) {
+  let retryAfterSeconds: number | null;
+  try {
+    retryAfterSeconds = await getRateLimitRetryAfter(request, values.email);
+  } catch (error) {
+    console.error("Contact rate limiting is unavailable.", error);
+    return NextResponse.json(
+      { error: "The contact form is temporarily unavailable. Please try again later." },
+      { status: 503 },
+    );
+  }
+
+  if (retryAfterSeconds !== null) {
     return NextResponse.json(
       { error: "Too many messages. Please try again in a few minutes." },
       {
         status: 429,
-        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+        headers: { "Retry-After": String(retryAfterSeconds) },
       },
     );
   }
