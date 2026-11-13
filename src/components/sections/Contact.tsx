@@ -1,11 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { useFadeInOnScroll } from "../hooks/useFadeInOnScroll";
-import ContactForm from "../contact/ContactForm";
+import { useLocale } from "../../i18n/LocaleProvider";
 
 export default function Contact() {
+  const { locale, messages } = useLocale();
   const { ref, isVisible } = useFadeInOnScroll();
+
   return (
     <section
       ref={ref}
@@ -13,34 +15,33 @@ export default function Contact() {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-16 px-6 md:grid-cols-2">
-        <div>
-          <h2 className="font-serif text-3xl text-[#3D2314]">Get in touch</h2>
-          <p className="mt-3 max-w-xs font-sans text-sm leading-relaxed text-[#6B5344]">
-            Have a custom order in mind? Want to know more about a product? We&apos;d love to hear from you.
+      <div className="mx-auto max-w-4xl px-6">
+        <div className="rounded-2xl border border-[#D9C9BB] bg-[#F0E8DF] px-8 py-16 text-center">
+          <h2 className="font-serif text-3xl text-[#3D2314]">
+            {messages.cta.title}
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-sans text-sm leading-relaxed text-[#6B5344]">
+            {messages.cta.description}
           </p>
 
-          <div className="mt-8 flex flex-col gap-4">
-            {[
-              { label: "Instagram", handle: "@crochinesta", icon: "/insta-logo.png", href: "https://www.instagram.com/cro.chenista/" },
-              { label: "WhatsApp", handle: "+216 24 029 896", icon: "/whatsapp-logo.png", href: "https://wa.me/21624029896" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D9C9BB] bg-[#F0E8DF]">
-                  <Image src={item.icon} alt={item.label} width={28} height={28} className="rounded-full object-contain" />
-                </span>
-                <div>
-                  <p className="font-sans text-sm font-medium text-[#3D2314]">{item.label}</p>
-                  <p className="font-sans text-xs text-[#9B6845]"><a href={item.href} target="_blank" rel="noopener noreferrer">
-                    {item.handle}
-                  </a></p>
-                </div>
-              </div>
-            ))}
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href={`/${locale}/contact`}
+              className="w-full rounded-full bg-[#3D2314] px-8 py-3 text-center font-sans text-sm font-semibold text-white transition-colors hover:bg-[#5a3520] sm:w-auto"
+            >
+              {messages.cta.contact}
+            </Link>
+
+            <a
+              href={`https://wa.me/21624029896?text=${encodeURIComponent(messages.contact.whatsappMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full border border-[#D9C9BB] bg-white px-8 py-3 text-center font-sans text-sm font-semibold text-[#3D2314] transition-colors hover:bg-[#FAF8F5] sm:w-auto"
+            >
+              {messages.cta.whatsapp}
+            </a>
           </div>
         </div>
-
-        <ContactForm includeSubject={false} />
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart, Leaf, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { useFadeInOnScroll } from "../../../components/hooks/useFadeInOnScroll";
+import { useLocale } from "../../../i18n/LocaleProvider";
 
 function FadeInSection({
   children,
@@ -27,31 +28,13 @@ function FadeInSection({
   );
 }
 
-const values = [
-  {
-    icon: Heart,
-    iconBg: "bg-(--accent)",
-    title: "Made with love",
-    description:
-      "Every stitch carries care, patience, and a personal touch you can feel.",
-  },
-  {
-    icon: Leaf,
-    iconBg: "bg-[#eef2e6]",
-    title: "Sustainable materials",
-    description:
-      "We choose quality yarns thoughtfully, creating pieces meant to last.",
-  },
-  {
-    icon: Sparkles,
-    iconBg: "bg-[#f5ece4]",
-    title: "One of a kind",
-    description:
-      "No two pieces are exactly alike -- each one has its own character.",
-  },
-];
-
 export default function AboutPage() {
+  const { locale, messages } = useLocale();
+  const values = [
+    { icon: Heart, iconBg: "bg-(--accent)", title: messages.about.loveTitle, description: messages.about.loveDescription },
+    { icon: Leaf, iconBg: "bg-[#eef2e6]", title: messages.about.sustainableTitle, description: messages.about.sustainableDescription },
+    { icon: Sparkles, iconBg: "bg-[#f5ece4]", title: messages.about.uniqueTitle, description: messages.about.uniqueDescription },
+  ];
   return (
     <>
       <FadeInSection className="py-20">
@@ -59,37 +42,35 @@ export default function AboutPage() {
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-(--muted-foreground)">
-                Our story
+                {messages.about.eyebrow}
               </p>
               <h1 className="font-serif text-5xl leading-tight tracking-wide text-(--primary) lg:text-6xl">
-                <span className="block">Made by hand,</span>
-                <span className="block">made with heart</span>
+                <span className="block">{messages.about.titleFirst}</span>
+                <span className="block">{messages.about.titleSecond}</span>
               </h1>
               <p className="max-w-xl font-sans text-lg leading-relaxed text-(--muted-foreground) md:text-xl">
-                Crochinesta began as a small passion project. Every piece you
-                see here is crocheted by hand, one stitch at a time, with care
-                and patience.
+                {messages.about.description}
               </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <span className="rounded-full border border-(--border) bg-(--accent) px-3 py-1 font-sans text-xs font-medium text-(--primary)">
-                100% Handmade
+                {messages.about.handmade}
               </span>
               <span className="rounded-full border border-(--border) bg-(--accent) px-3 py-1 font-sans text-xs font-medium text-(--primary)">
-                Stitched in Sousse
+                {messages.about.location}
               </span>
               <span className="rounded-full border border-(--border) bg-(--accent) px-3 py-1 font-sans text-xs font-medium text-(--primary)">
-                Made with love
+                {messages.about.madeWithLove}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                href="/products"
+                href={`/${locale}/products`}
                 className="rounded-full bg-(--primary) px-8 py-3 font-sans font-semibold text-white transition-opacity hover:opacity-90"
               >
-                Shop Now
+                {messages.about.shop}
               </Link>
             </div>
           </div>
@@ -98,7 +79,7 @@ export default function AboutPage() {
             <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl bg-(--accent) shadow-[8px_12px_32px_rgba(180,140,100,0.25)] transition-transform duration-300 hover:rotate-0 md:-rotate-1">
               <Image
                 src="/images/about-hero.jpg"
-                alt="Handmade crochet work in progress"
+                alt={messages.about.imageAlt}
                 fill
                 sizes="(max-width: 768px) 100vw, 42vw"
                 className="object-cover"
@@ -120,7 +101,7 @@ export default function AboutPage() {
           <div className="relative aspect-square rotate-1deg overflow-hidden rounded-2xl bg-(--accent) shadow-[8px_12px_32px_rgba(180,140,100,0.2)] transition-transform duration-300 hover:rotate-0">
             <Image
               src="/images/about-hero.jpg"
-              alt="Handmade crochet work in progress"
+              alt={messages.about.imageAlt}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
@@ -129,17 +110,13 @@ export default function AboutPage() {
 
           <div>
             <h2 className="mb-4 font-serif text-2xl text-(--primary)">
-              How it all started
+              {messages.about.started}
             </h2>
             <p className="mb-4 font-sans text-sm leading-relaxed text-(--muted-foreground)">
-              It all started at home, with a few balls of yarn and a love for
-              creating something beautiful with our own hands. What began as
-              gifts for friends and family slowly turned into Crochinesta.
+              {messages.about.startedFirst}
             </p>
             <p className="mb-4 font-sans text-sm leading-relaxed text-(--muted-foreground)">
-              Today, every bag, keychain, and decoration is still made the same
-              way: by hand, with attention to every detail, because that&apos;s
-              what makes each piece truly one of a kind.
+              {messages.about.startedSecond}
             </p>
           </div>
         </div>
@@ -150,7 +127,7 @@ export default function AboutPage() {
       <FadeInSection className="py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-center font-serif text-3xl text-(--primary)">
-            What we believe in
+            {messages.about.beliefs}
           </h2>
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -184,13 +161,13 @@ export default function AboutPage() {
             className="mx-auto mb-4 opacity-50"
           />
           <h2 className="mb-4 font-serif text-2xl text-(--primary)">
-            Discover our collection
+            {messages.about.discover}
           </h2>
           <Link
-            href="/products"
+            href={`/${locale}/products`}
             className="inline-flex rounded-full bg-(--primary) px-8 py-3 font-semibold text-white transition-opacity hover:opacity-90"
           >
-            Shop Now
+            {messages.about.shop}
           </Link>
         </div>
       </FadeInSection>

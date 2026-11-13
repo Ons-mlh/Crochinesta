@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useFadeInOnScroll } from "../hooks/useFadeInOnScroll";
 import ProductCard from "../ui/ProductCard";
+import { useLocale } from "../../i18n/LocaleProvider";
 
 const newReleases = [
   { id: 1, name: "Rust Meadow Tote", price: "$68", image: "/images/placeholder.jpg", isNew: true },
@@ -16,6 +17,7 @@ const newReleases = [
 ];
 
 export default function NewReleases() {
+  const { locale, messages } = useLocale();
   const { ref, isVisible } = useFadeInOnScroll();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [showLeft, setShowLeft] = useState(false);
@@ -46,9 +48,9 @@ export default function NewReleases() {
     >
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-8 flex items-center justify-between gap-4">
-          <h2 className="font-serif text-3xl text-[#3D2314]">New Releases</h2>
-          <Link href="/products" className="font-sans text-sm text-[#9B6845] hover:underline">
-            View all
+          <h2 className="font-serif text-3xl text-[#3D2314]">{messages.releases.title}</h2>
+          <Link href={`/${locale}/products`} className="font-sans text-sm text-[#9B6845] hover:underline">
+            {messages.releases.viewAll}
           </Link>
         </div>
 
@@ -56,7 +58,7 @@ export default function NewReleases() {
           {showLeft ? (
             <button
               type="button"
-              aria-label="Scroll products left"
+              aria-label={messages.releases.previous}
               onClick={() => scrollRef.current?.scrollBy({ left: -280, behavior: "smooth" })}
               className="absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-x-5 -translate-y-1/2 items-center justify-center rounded-full border border-[#D9C9BB] bg-white text-[#3D2314] shadow-sm transition-colors hover:bg-[#F0E8DF]"
             >
@@ -67,7 +69,7 @@ export default function NewReleases() {
           {showRight ? (
             <button
               type="button"
-              aria-label="Scroll products right"
+              aria-label={messages.releases.next}
               onClick={() => scrollRef.current?.scrollBy({ left: 280, behavior: "smooth" })}
               className="absolute right-0 top-1/2 z-10 flex h-10 w-10 translate-x-5 -translate-y-1/2 items-center justify-center rounded-full border border-[#D9C9BB] bg-white text-[#3D2314] shadow-sm transition-colors hover:bg-[#F0E8DF]"
             >
@@ -80,8 +82,8 @@ export default function NewReleases() {
             onScroll={updateScrollState}
             className="flex flex-row gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
-            {newReleases.map((product) => (
-              <ProductCard key={product.id} {...product} />
+            {newReleases.map((product, index) => (
+              <ProductCard key={product.id} {...product} name={messages.releases.mockNames[index]} newLabel={messages.releases.new} wishlistAddLabel={messages.releases.wishlistAdd} wishlistRemoveLabel={messages.releases.wishlistRemove} addToCartLabel={messages.releases.addToCart} />
             ))}
           </div>
 
@@ -91,7 +93,7 @@ export default function NewReleases() {
                 key={index}
                 type="button"
                 onClick={() => scrollRef.current?.scrollTo({ left: index * 280, behavior: "smooth" })}
-                aria-label={`Go to slide ${index + 1}`}
+                aria-label={`${messages.releases.slide} ${index + 1}`}
                 className={`transition-all duration-300 ${
                   activeIndex === index ? "h-1.5 w-4 rounded-full bg-[#9B6845]" : "h-1.5 w-1.5 rounded-full bg-[#D9C9BB]"
                 }`}

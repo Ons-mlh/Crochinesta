@@ -7,6 +7,7 @@
 
 :root {
   --radius: 0.75rem;
+  --font-heading: Georgia, "Times New Roman", serif;
 
   /* Colors */
   --background: #f7f7f5;
@@ -88,7 +89,7 @@
     body {
       background: var(--background);
       color: var(--foreground);
-      font-family: var(--font-heading), serif;
+      font-family: Arial, Tahoma, sans-serif;
       min-height: 100vh;
     }
 
@@ -99,11 +100,25 @@
     h5,
     h6 {
       color: var(--primary);
-      font-family: var(--font-heading), serif;
+      font-family: var(--font-heading), Georgia, "Times New Roman", serif;
     }
 
     a {
       transition: color 0.2s ease;
     }
   }
+}
+
+[lang="ar"] body {
+  font-family: Tahoma, Arial, sans-serif;
+  --font-heading: Tahoma, Arial, sans-serif;
+}
+
+[lang="ar"] h1,
+[lang="ar"] h2,
+[lang="ar"] h3,
+[lang="ar"] h4,
+[lang="ar"] h5,
+[lang="ar"] h6 {
+  font-family: Tahoma, Arial, sans-serif;
 }

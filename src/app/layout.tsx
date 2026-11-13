@@ -1,8 +1,7 @@
 import "./globals.css";
-import {
-  IM_Fell_French_Canon_SC,
-} from "next/font/google";
-import NavBar from "../components/layout/NavBar";
+import { headers } from "next/headers";
+import { IM_Fell_French_Canon_SC } from "next/font/google";
+import { defaultLocale, getDirection, isLocale } from "../i18n/config";
 
 const headingFont = IM_Fell_French_Canon_SC({
   weight: "400",
@@ -10,17 +9,18 @@ const headingFont = IM_Fell_French_Canon_SC({
   variable: "--font-heading",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const requestedLocale = requestHeaders.get("x-locale") ?? defaultLocale;
+  const locale = isLocale(requestedLocale) ? requestedLocale : defaultLocale;
+
   return (
-    <html lang="en">
-      <body className={headingFont.variable}>
-        <NavBar />
-        {children}
-      </body>
+    <html lang={locale} dir={getDirection(locale)}>
+      <body className={headingFont.variable}>{children}</body>
     </html>
   );
 }

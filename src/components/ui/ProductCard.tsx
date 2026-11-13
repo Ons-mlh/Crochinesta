@@ -10,9 +10,13 @@ type ProductCardProps = {
   price: string;
   image: string;
   isNew?: boolean;
+  newLabel?: string;
+  wishlistAddLabel?: string;
+  wishlistRemoveLabel?: string;
+  addToCartLabel?: string;
 };
 
-export default function ProductCard({ name, price, image, isNew = false }: ProductCardProps) {
+export default function ProductCard({ name, price, image, isNew = false, newLabel = "New", wishlistAddLabel = "Add to wishlist", wishlistRemoveLabel = "Remove from wishlist", addToCartLabel = "Add to cart" }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const isPlaceholder = image.includes("placeholder");
 
@@ -33,7 +37,7 @@ export default function ProductCard({ name, price, image, isNew = false }: Produ
 
         <button
           type="button"
-          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          aria-label={isWishlisted ? wishlistRemoveLabel : wishlistAddLabel}
           onClick={() => setIsWishlisted((current) => !current)}
           className="absolute right-3 top-3 z-10"
         >
@@ -45,7 +49,7 @@ export default function ProductCard({ name, price, image, isNew = false }: Produ
 
         <button
           type="button"
-          aria-label="Add to cart"
+          aria-label={addToCartLabel}
           className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#3D2314] text-white opacity-0 transition-opacity group-hover:opacity-100"
         >
           <ShoppingBag size={16} />
@@ -56,7 +60,7 @@ export default function ProductCard({ name, price, image, isNew = false }: Produ
         <h3 className="font-serif text-sm font-medium text-[#3D2314]">{name}</h3>
         {isNew ? (
           <span className="rounded-full bg-[#3D2314] px-2 py-0.5 font-sans text-[10px] text-white">
-            New
+            {newLabel}
           </span>
         ) : null}
       </div>
