@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { Clock, Mail, MapPin } from "lucide-react";
 import { useLocale } from "../../../i18n/LocaleProvider";
@@ -89,7 +88,10 @@ export default function ContactPage() {
         if (data.fieldErrors) {
           const serverErrors: ContactErrors = {};
           Object.entries(data.fieldErrors).forEach(([field, serverMessages]) => {
-            const serverMessage = serverMessages?.[0] || "";
+            const serverMessage =
+              typeof serverMessages === "string"
+                ? serverMessages
+                : serverMessages?.[0] || "";
             const translated = serverMessage.includes("Name must")
               ? messages.contact.invalidName
               : serverMessage.includes("email address")
@@ -169,7 +171,7 @@ export default function ContactPage() {
                     >
                       <span className="flex h-11 w-11 items-center justify-center rounded-full border border-(--border) bg-(--accent)">
                         <span className="flex h-7 w-7 items-center justify-center overflow-hidden">
-                          <Image
+                          <img
                             src={icon}
                             alt={label}
                             width={28}

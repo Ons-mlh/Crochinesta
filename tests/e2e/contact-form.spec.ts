@@ -54,6 +54,26 @@ test("language switcher keeps the current page across locales", async ({ page })
   }
 });
 
+test("contact form translates string field errors returned by the API", async ({ page }) => {
+  await page.route("**/api/contact", async (route) => {
+    await route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fieldErrors: { name: "Name must be between 2 and 150 characters." },
+      }),
+    });
+  });
+
+  await page.goto("/fr/contact");
+  await page.getByLabel("Nom").fill("A");
+  await page.getByLabel("E-mail").fill("ada@example.com");
+  await page.getByLabel("Message").fill("Question sur une création au crochet.");
+  await page.getByRole("button", { name: "Envoyer le message" }).click();
+
+  await expect(page.getByText("Le nom doit contenir au moins 2 caractères.")).toBeVisible();
+});
+
 test("visitor can submit the contact form", async ({ page }) => {
   let submittedBody: unknown;
 
