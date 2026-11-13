@@ -18,4 +18,5 @@ The contact endpoint allows up to five valid submissions per client in a rolling
 
 - `npm run test:unit` runs contact API tests with the Resend provider mocked.
 - `npm run test:e2e` runs a single Playwright contact form success flow; it intercepts the API request, so no email or production credentials are used. Install the browser once with `npx playwright install chromium`.
+- `npm run lint`, `npm run typecheck`, and `npm run build` run the source syntax check, TypeScript checks, and production build. Pull requests and pushes to `main` run these checks and the unit tests in GitHub Actions; Playwright reports and failure traces are uploaded as workflow artifacts.
 - Locale redirect and text-direction tests are staged for when localized routes land on the base branch. Add component or broader browser coverage only when it covers behavior beyond this contact journey.
